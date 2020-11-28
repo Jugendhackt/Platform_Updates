@@ -8,6 +8,8 @@ if (zulip.isConnected()) {
     zulip.getAllData().then((data) => {
         let siteURL = zulip.getLoginData().site;
         $(".zulip_url").text(siteURL);
+        $(".zulip_email").text(zulip.getLoginData().email);
+        $(".zulip_unread_count").text(data.unread.messages.length);
         for (let message in data.unread.messages) {
             if (!data.unread.messages.hasOwnProperty(message)) continue;
             message = data.unread.messages[message];
