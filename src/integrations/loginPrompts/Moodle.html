@@ -1,37 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Moodle Login</title>
     <script type="module" src="../backend/integration.js"></script>
     <script type="module" src="../backend/moodle.js"></script>
 </head>
+
 <body>
-<h1>Verbinde deinen Moodle Account</h1>
-<p>Um deinen Moodle Account zu verbinden müssen wir die URL deiner Moodle Instanz kennen!</p>
-<p>Außerdem brauchen wir einmalig Nutzername & Passwort.</p>
-<p style="font-style: italic">Deine Schule muss das Verbinden mit der Moodle App erlaubt haben.</p>
-<br>
-<label for="url">URL deiner Moodle Instanz: </label><input id="url" type="text" placeholder="https://moodle.example.com"><br>
-<label for="username">Dein Nutzername: </label><input id="username" type="text" placeholder="MuMax"><br>
-<label for="password">Dein Passwort: </label><input id="password" type="password" placeholder="1234"><br>
-<button id="login">Login!</button>
+    <h1>
+        Verbinde deinen Moodle Account
+    </h1>
+
+    <p>
+        Um deinen Moodle Account zu verbinden müssen wir die URL deiner Moodle Instanz kennen!
+        Außerdem brauchen wir einmalig Nutzername & Passwort.
+    </p>
+
+    <p><i>Deine Schule muss das Verbinden mit der Moodle App erlaubt haben.</i></p>
+
+    <br>
+
+    <label for="url">
+        URL deiner Moodle Instanz:
+    </label>
+
+    <input id="url" type="text" placeholder="https://moodle.example.com">
+
+    <br>
+
+    <label for="username">Dein Nutzername: </label><input id="username" type="text" placeholder="MuMax">
+
+    <br>
+
+    <label for="password">Dein Passwort: </label><input id="password" type="password" placeholder="1234">
+
+    <br>
+
+    <button id="login">
+        Login!
+    </button>
+
+    <!-- Login -->
+    <script type="module">
+        import { Moodle } from "../backend/moodle.js";
+
+        let moodle = new Moodle();
+
+        if (!moodle.isConnected()) {
+            document.getElementById('login').onclick = () => new Moodle().login({
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                site: document.getElementById('url').value
+            });
+        } else {
+            document.body.innerHTML = '<h3>Du hast dich bereits mit Moodle verbunden</h3><br><p>Kehre zurück zur <a href="/">App</a></p>';
+        }
+    </script>
 </body>
-<script type="module">
-    import { Moodle } from "../backend/moodle.js";
 
-    let moodle = new Moodle();
-
-    if (!moodle.isConnected()) {
-        document.getElementById('login').onclick = () => new Moodle().login({
-            username: document.getElementById('username').value,
-            password: document.getElementById('password').value,
-            site: document.getElementById('url').value
-        });
-    } else {
-        document.body.innerHTML = '<h3>Du hast dich bereits mit Moodle verbunden</h3><br><p>Kehre zurück zur <a href="/">App</a></p>';
-    }
-
-
-</script>
 </html>
