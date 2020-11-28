@@ -8,6 +8,7 @@ if (moodle.isConnected()) {
     moodle.getAllData().then((data) => {
         $(".moodle_firstName").text(data.firstName);
         $(".moodle_unread").text(data.unread);
+        $(".moodle_siteName").text(data.name);
         for (let event in data.timeline) {
             if (!data.timeline.hasOwnProperty(event)) continue;
             event = data.timeline[event];
