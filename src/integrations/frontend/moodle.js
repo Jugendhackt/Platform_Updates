@@ -6,6 +6,7 @@ if (moodle.isConnected()) {
     document.getElementById('addMoodleButton').hidden = true; //TODO disable instead of hide
     $("#moodleFrame").load("integrations/frames/Moodle.html");
     moodle.getAllData().then((data) => {
+        $(".moodle_siteName").text(data.name);
         $(".moodle_firstName").text(data.firstName);
         $(".moodle_unread").text(data.unread);
         for (let event in data.timeline) {
