@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Moodle Login</title>
-    <script type="module" src="../backend/integration.js"></script>
-    <script type="module" src="../backend/moodle.js"></script>
+
 </head>
 
 <body>
@@ -42,6 +41,8 @@
         Login!
     </button>
 
+
+
     <!-- Login -->
     <script type="module">
         import { Moodle } from "../backend/moodle.js";
@@ -58,6 +59,9 @@
             document.body.innerHTML = '<h3>Du hast dich bereits mit Moodle verbunden</h3><br><p>Kehre zurück zur <a href="/">App</a></p>';
         }
     </script>
+
+    <script type="module" src="../backend/integration.js"></script>
+    <script type="module" src="../backend/moodle.js"></script>
 </body>
 
 </html>
