@@ -21,4 +21,11 @@ export class Integration {
      */
     getAllData() { return new Promise(((resolve, reject) => resolve({}))); }
 
+
+    /**
+     * Removes all login credentials
+     * This should be accessible in a static context
+     */
+    static logout() {}
+
 }

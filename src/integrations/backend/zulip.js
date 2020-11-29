@@ -15,7 +15,7 @@ export class Zulip extends Integration {
                         localStorage.setItem('int_zulip_site', loginData.site);
                         location.href = '/';
                     } else {
-                        alert("Verbindung zu Moodle fehlgeschlagen!");
+                        alert("Verbindung zu Zulip fehlgeschlagen!");
                     }
                 }
                 req.open('POST', loginData.site + '/api/v1/fetch_api_key')
@@ -25,9 +25,15 @@ export class Zulip extends Integration {
                 localStorage.setItem('int_zulip_token', loginData.token);
                 localStorage.setItem('int_zulip_email', loginData.email);
                 localStorage.setItem('int_zulip_site', loginData.site);
-                location.href = '/';
+                this.getUnreadMessages().then(() => location.href = '/').catch(() => alert("Verbindung zu Zulip fehlgeschlagen!") && Zulip.logout())
             }
         }
+    }
+
+    static logout() {
+        localStorage.removeItem('int_zulip_token');
+        localStorage.removeItem('int_zulip_email');
+        localStorage.removeItem('int_zulip_site');
     }
 
     getLoginData() {
@@ -52,6 +58,7 @@ export class Zulip extends Integration {
             let loginData = this.getLoginData();
             let req = new XMLHttpRequest();
             req.onloadend = () => {
+                if (req.status !== 200) reject();
                 let resp = JSON.parse(req.responseText);
                 resolve(resp);
             }

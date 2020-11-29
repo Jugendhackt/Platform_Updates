@@ -24,6 +24,11 @@ export class Moodle extends Integration {
         }
     }
 
+    static logout() {
+        localStorage.removeItem('int_moodle_token');
+        localStorage.removeItem('int_moodle_site');
+    }
+
     getLoginData() {
         return {
             site: localStorage.getItem('int_moodle_site'),
