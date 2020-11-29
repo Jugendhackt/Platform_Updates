@@ -4,6 +4,7 @@ document.getElementById('addZulipButton').onclick = () => zulip.login();
 
 if (zulip.isConnected()) {
     document.getElementById('addZulipButton').hidden = true; //TODO disable instead of hide
+    document.getElementById('logoutButton').hidden = false;
     $("#zulipFrame").load("integrations/frames/Zulip.html");
     zulip.getAllData().then((data) => {
         let siteURL = zulip.getLoginData().site;

@@ -4,6 +4,7 @@ document.getElementById('addMoodleButton').onclick = () => moodle.login();
 
 if (moodle.isConnected()) {
     document.getElementById('addMoodleButton').hidden = true; //TODO disable instead of hide
+    document.getElementById('logoutButton').hidden = false;
     $("#moodleFrame").load("integrations/frames/Moodle.html");
     moodle.getAllData().then((data) => {
         $(".moodle_siteName").text(data.name);
