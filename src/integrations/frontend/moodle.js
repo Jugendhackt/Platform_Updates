@@ -9,6 +9,7 @@ if (moodle.isConnected()) {
         $(".moodle_siteName").text(data.name);
         $(".moodle_firstName").text(data.firstName);
         $(".moodle_unread").text(data.unread);
+        document.getElementById('moodle_messages_link').href = moodle.getLoginData().site + '/message/index.php';
         for (let event in data.timeline) {
             if (!data.timeline.hasOwnProperty(event)) continue;
             event = data.timeline[event];

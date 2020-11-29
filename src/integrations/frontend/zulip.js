@@ -7,9 +7,10 @@ if (zulip.isConnected()) {
     $("#zulipFrame").load("integrations/frames/Zulip.html");
     zulip.getAllData().then((data) => {
         let siteURL = zulip.getLoginData().site;
-        $(".zulip_url").text(siteURL);
+        $(".zulip_url").text(siteURL.replace('http://', '').replace('https://', ''));
         $(".zulip_email").text(zulip.getLoginData().email);
         $(".zulip_unread_count").text(data.unread.messages.length);
+        document.getElementById('zulip_messages_link').href = siteURL;
         for (let message in data.unread.messages) {
             if (!data.unread.messages.hasOwnProperty(message)) continue;
             message = data.unread.messages[message];
