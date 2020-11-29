@@ -5,7 +5,9 @@ let zulip = new Zulip();
 document.getElementById('addZulipButton').onclick = () => zulip.login();
 
 if (zulip.isConnected()) {
-    document.getElementById('addZulipButton').hidden = true; //TODO disable instead of hide
+    //document.getElementById('addZulipButton').hidden = true; //TODO disable instead of hide
+    //document.getElementsById('addZulipButton')[0].setAttribute("disabled", "disabled");
+    document.getElementById('addZulipButton').className = "btn btn-primary disabled";
     setUserIsLoggedIn();
     $("#zulipFrame").load("integrations/frames/Zulip.html");
     zulip.getAllData().then((data) => {
