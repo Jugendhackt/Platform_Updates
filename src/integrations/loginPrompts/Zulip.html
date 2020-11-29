@@ -7,96 +7,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <link rel="stylesheet" href="./moodle.css">
 </head>
 
 <body>
-<div class="container">
-
-    <br>
-
-    <h1>
-        Verbinde deinen Zulip Account
-    </h1>
-
-    <p>
-        Um deinen Zulip Account zu verbinden müssen wir die URL deiner Zulip Instanz kennen!
-        Außerdem brauchen wir einmalig Nutzername & Passwort oder EMail & Token.
-    </p>
-
-    <br>
-
-    <h2>Deine Benutzerinfos eintragen</h2>
-
-    <label for="url">URL deiner Zulip Instanz: </label>
-
-    <input id="url" type="text" placeholder="https://zulip.example.com" class="form-control">
-
-    <br>
-
-    <div id="passwordLogin">
-        <label for="username">Dein Nutzername/E-Mail: </label><input id="username" type="text" placeholder="MMustermann"
-                                                              class="form-control">
+    <div class="container">
 
         <br>
 
-        <label for="password">Dein Passwort: </label><input id="password" type="password" placeholder="1234"
-                                                            class="form-control">
+        <h1 class="display-1">Verbinde deinen Zulip-Account</h1>
 
-        <a href="#" onclick="this.parentElement.hidden = true; document.getElementById('tokenLogin').hidden = false">Stattdessen mit Token einloggen</a>
-    </div>
-
-    <div id="tokenLogin" hidden>
-        <label for="email">Deine E-Mail: </label><input id="email" type="text" placeholder="mustermann@example.com"
-                                                              class="form-control">
+        <p>
+            Um deinen Zulip Account zu verbinden müssen wir die URL deiner Zulip Instanz kennen!
+            Außerdem brauchen wir einmalig Nutzername & Passwort oder EMail & Token.
+        </p>
 
         <br>
 
-        <label for="token">Dein Token: </label><input id="token" type="password" placeholder="wL3ukNFehk93S5qz" class="form-control">
-        <a href="#" onclick="this.parentElement.hidden = true; document.getElementById('passwordLogin').hidden = false">Stattdessen mit Token einloggen</a>
+        <h1 class="display-4">Deine Benutzerinfos eintragen</h1>
+
+        <label for="url">URL deiner Zulip Instanz: </label>
+
+        <input id="url" type="text" placeholder="https://zulip.example.com" class="form-control">
+
+        <br>
+
+        <div id="passwordLogin">
+            <label for="username">Dein Nutzername/E-Mail: </label><input id="username" type="text"
+                placeholder="MMustermann" class="form-control">
+
+            <br>
+
+            <label for="password">Dein Passwort: </label><input id="password" type="password" placeholder="1234"
+                class="form-control">
+
+            <a href="#"
+                onclick="this.parentElement.hidden = true; document.getElementById('tokenLogin').hidden = false">Stattdessen
+                mit Token einloggen</a>
+        </div>
+
+        <div id="tokenLogin" hidden>
+            <label for="email">Deine E-Mail: </label><input id="email" type="text" placeholder="mustermann@example.com"
+                class="form-control">
+
+            <br>
+
+            <label for="token">Dein Token: </label><input id="token" type="password" placeholder="wL3ukNFehk93S5qz"
+                class="form-control">
+            <a href="#"
+                onclick="this.parentElement.hidden = true; document.getElementById('passwordLogin').hidden = false">Stattdessen
+                mit Token einloggen</a>
+        </div>
+
+        <br>
+
+        <button id="login" class="btn btn-primary">Login!</button>
     </div>
 
-    <br>
-
-    <button id="login" class="btn btn-primary">Login!</button>
-</div>
 
 
 
+    <!-- Login -->
+    <script type="module">
+        import { Zulip } from "../backend/zulip.js";
 
-<!-- Login -->
-<script type="module">
-    import { Zulip } from "../backend/zulip.js";
+        let zulip = new Zulip();
 
-    let zulip = new Zulip();
+        if (!zulip.isConnected()) {
+            document.getElementById('login').onclick = () => {
+                if (document.getElementById('token').value.length === 0) {
+                    zulip.login({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value,
+                        site: document.getElementById('url').value
+                    });
+                } else {
+                    zulip.login({
+                        email: document.getElementById('email').value,
+                        token: document.getElementById('token').value,
+                        site: document.getElementById('url').value
+                    });
+                }
+            };
+        } else {
+            document.body.innerHTML = '<h3>Du hast dich bereits mit Zulip verbunden</h3><br><p>Kehre zurück zur <a href="/">App</a></p>';
+        }
+    </script>
 
-    if (!zulip.isConnected()) {
-        document.getElementById('login').onclick = () => {
-            if (document.getElementById('token').value.length === 0) {
-                zulip.login({
-                    username: document.getElementById('username').value,
-                    password: document.getElementById('password').value,
-                    site: document.getElementById('url').value
-                });
-            } else {
-                zulip.login({
-                    email: document.getElementById('email').value,
-                    token: document.getElementById('token').value,
-                    site: document.getElementById('url').value
-                });
-            }
-        };
-    } else {
-        document.body.innerHTML = '<h3>Du hast dich bereits mit Zulip verbunden</h3><br><p>Kehre zurück zur <a href="/">App</a></p>';
-    }
-</script>
-
-<!-- Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
         crossorigin="anonymous"></script>
 </body>
