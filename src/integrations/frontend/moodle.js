@@ -1,10 +1,12 @@
 import { Moodle } from '../backend/moodle.js';
+import { setUserIsLoggedIn } from "./common.js";
+
 let moodle = new Moodle();
 document.getElementById('addMoodleButton').onclick = () => moodle.login();
 
 if (moodle.isConnected()) {
     document.getElementById('addMoodleButton').hidden = true; //TODO disable instead of hide
-    document.getElementById('logoutButton').hidden = false;
+    setUserIsLoggedIn();
     $("#moodleFrame").load("integrations/frames/Moodle.html");
     moodle.getAllData().then((data) => {
         $(".moodle_siteName").text(data.name);
