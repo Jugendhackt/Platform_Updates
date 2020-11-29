@@ -5,7 +5,7 @@ let moodle = new Moodle();
 document.getElementById('addMoodleButton').onclick = () => moodle.login();
 
 if (moodle.isConnected()) {
-    document.getElementById('addMoodleButton').hidden = true; //TODO disable instead of hide
+    document.getElementById('addMoodleButton').classList.add('disabled');
     setUserIsLoggedIn();
     $("#moodleFrame").load("integrations/frames/Moodle.html");
     moodle.getAllData().then((data) => {
