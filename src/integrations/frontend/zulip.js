@@ -12,12 +12,12 @@ if (zulip.isConnected()) {
         showIntegration('Zulip', {
             'zulip_url': siteURL.replace('http://', '').replace('https://', ''),
             'zulip_email': zulip.getLoginData().email,
-            'zulip_unread_count': data.unread.messages.length
+            'zulip_unread_count': data.unread.length
         }, (frame) => {
             frame.getElementsByClassName('zulip_messages_link')[0].href = siteURL;
-            for (let message in data.unread.messages) {
-                if (!data.unread.messages.hasOwnProperty(message)) continue;
-                message = data.unread.messages[message];
+            for (let message in data.unread) {
+                if (!data.unread.hasOwnProperty(message)) continue;
+                message = data.unread[message];
                 let messageElement = document.createElement('li');
                 message.content = message.content.replace('href="/user', 'href="' + siteURL + '/user')
                 message.content = message.content.replace('src="/user', 'src="' + siteURL + '/user')

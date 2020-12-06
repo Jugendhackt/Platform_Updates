@@ -60,7 +60,13 @@ export class Zulip extends Integration {
             req.onloadend = () => {
                 if (req.status !== 200) reject();
                 let resp = JSON.parse(req.responseText);
-                resolve(resp);
+                let unreadMessages = [];
+                for (let message in resp.messages) {
+                    if (!resp.messages.hasOwnProperty(message)) continue;
+                    message = resp.messages[message];
+                    if (!message.flags || !message.flags.includes("read")) unreadMessages.push(message);
+                }
+                resolve(unreadMessages);
             }
             req.open('GET', loginData.site + '/api/v1/messages?anchor=first_unread&num_before=0&num_after=1000')
             req.setRequestHeader("Authorization", "Basic " + btoa(loginData.email + ':' + loginData.token))
