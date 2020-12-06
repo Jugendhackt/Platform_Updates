@@ -40,7 +40,8 @@ export class Moodle extends Integration {
         let siteData = await this.getSiteInfo();
         let unread = await this.getUnreadNotifications(siteData.userid);
         let timeline = await this.getTimelineData();
-        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline}
+        let news = await this.getNewForumMessages();
+        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'news': news}
     }
 
     async getTimelineData() {
@@ -78,6 +79,46 @@ export class Moodle extends Integration {
                 resolve(req.responseText);
             }
             req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=core_message_get_unread_conversations_count&moodlewsrestformat=json&useridto=' + userid)
+            req.send()
+        });
+    }
+
+    getNewForumMessages() {
+        return new Promise(async (resolve, reject) => {
+            let firstWrittenTime = Math.floor(Date.now() / 1000) - (60*60*24*3);
+            let loginData = this.getLoginData();
+            let forums = await this.getForums();
+            let i = 0;
+            let data = [];
+            forums.forEach((forum) => {
+                if (forum.numdiscussions === 0) {
+                    i++;
+                    if (i === forums.length) resolve(data);
+                    return;
+                }
+                let req = new XMLHttpRequest();
+                req.onloadend = () => {
+                    let forumData = JSON.parse(req.responseText).discussions;
+                    forumData = forumData.filter(data => data.modified > firstWrittenTime)
+                    data[forum.id] = forumData;
+                    i++;
+                    if (i === forums.length) resolve(data);
+                }
+                req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=mod_forum_get_forum_discussions&moodlewsrestformat=json&forumid=' + forum.id)
+                req.send()
+            });
+
+        });
+    }
+
+    getForums() {
+        return new Promise((resolve, reject) => {
+            let loginData = this.getLoginData();
+            let req = new XMLHttpRequest();
+            req.onloadend = () => {
+                resolve(JSON.parse(req.responseText));
+            }
+            req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=mod_forum_get_forums_by_courses&moodlewsrestformat=json')
             req.send()
         });
     }
