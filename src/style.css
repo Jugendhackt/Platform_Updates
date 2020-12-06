@@ -3,3 +3,13 @@
         font-size:20px !important;
     }
 }
+
+.container {
+    animation: blurAnimation 1.5s forwards;
+}
+
+@keyframes blurAnimation {
+    0% {filter: blur(10px)}
+    30% {filter: blur(9px)}
+    100% {filter: blur(0px)}
+}
