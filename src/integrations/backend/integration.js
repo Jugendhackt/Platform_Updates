@@ -3,15 +3,15 @@ export class Integration {
     /**
      * Prompts a login pane to open or performs the login
      */
-    login(loginData) {
-        if (!loginData) location.href = '/integrations/loginPrompts/' + this.constructor.name + '.html';
+    static login(loginData) {
+        if (!loginData) location.href = '/integrations/loginPrompts/' + this.name + '.html';
     }
 
 
     /**
      * Check if the user is already logged in
      */
-    isConnected() {
+    static isConnected() {
         return false;
     }
 

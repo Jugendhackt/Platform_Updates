@@ -56,10 +56,9 @@
     <script type="module">
         import { Moodle } from "../backend/moodle.js";
 
-        let moodle = new Moodle();
 
-        if (!moodle.isConnected()) {
-            document.getElementById('login').onclick = () => new Moodle().login({
+        if (!Moodle.isConnected()) {
+            document.getElementById('login').onclick = () => Moodle.login({
                 username: document.getElementById('username').value,
                 password: document.getElementById('password').value,
                 site: document.getElementById('url').value

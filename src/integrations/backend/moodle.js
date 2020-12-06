@@ -2,7 +2,7 @@ import {Integration} from "./integration.js";
 
 export class Moodle extends Integration {
 
-    login(loginData) {
+    static login(loginData) {
         super.login(loginData);
         if (loginData) {
             if (loginData.username && loginData.password && loginData.site) {
@@ -122,7 +122,7 @@ export class Moodle extends Integration {
         });
     }
 
-    isConnected() {
+    static isConnected() {
         return localStorage.getItem('int_moodle_token') && localStorage.getItem('int_moodle_site');
     }
 

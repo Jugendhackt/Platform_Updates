@@ -2,7 +2,7 @@ import {Integration} from "./integration.js";
 
 export class Zulip extends Integration {
 
-    login(loginData) {
+    static login(loginData) {
         super.login(loginData);
         if (loginData) {
             if (loginData.site && loginData.username && loginData.password) {
@@ -44,7 +44,7 @@ export class Zulip extends Integration {
         }
     }
 
-    isConnected() {
+    static isConnected() {
         return localStorage.getItem('int_zulip_site') && localStorage.getItem('int_zulip_token') && localStorage.getItem('int_zulip_email');
     }
 

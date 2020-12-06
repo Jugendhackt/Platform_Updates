@@ -72,18 +72,16 @@
     <script type="module">
         import { Zulip } from "../backend/zulip.js";
 
-        let zulip = new Zulip();
-
-        if (!zulip.isConnected()) {
+        if (!Zulip.isConnected()) {
             document.getElementById('login').onclick = () => {
                 if (document.getElementById('token').value.length === 0) {
-                    zulip.login({
+                    Zulip.login({
                         username: document.getElementById('username').value,
                         password: document.getElementById('password').value,
                         site: document.getElementById('url').value
                     });
                 } else {
-                    zulip.login({
+                    Zulip.login({
                         email: document.getElementById('email').value,
                         token: document.getElementById('token').value,
                         site: document.getElementById('url').value

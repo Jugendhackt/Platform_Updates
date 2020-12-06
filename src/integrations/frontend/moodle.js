@@ -1,10 +1,10 @@
 import { Moodle } from '../backend/moodle.js';
 import { setUserIsLoggedIn,showIntegration } from "./common.js";
 
-let moodle = new Moodle();
-document.getElementById('addMoodleButton').onclick = () => moodle.login();
+document.getElementById('addMoodleButton').onclick = () => Moodle.login();
 
-if (moodle.isConnected()) {
+if (Moodle.isConnected()) {
+    let moodle = new Moodle();
     document.getElementById('addMoodleButton').classList.add('disabled');
     setUserIsLoggedIn();
     moodle.getAllData().then((data) => {

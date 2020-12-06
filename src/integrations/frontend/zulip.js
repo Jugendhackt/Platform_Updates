@@ -1,10 +1,10 @@
 import { Zulip } from '../backend/zulip.js';
 import { setUserIsLoggedIn, showIntegration } from "./common.js";
 
-let zulip = new Zulip();
-document.getElementById('addZulipButton').onclick = () => zulip.login();
+document.getElementById('addZulipButton').onclick = () => Zulip.login();
 
-if (zulip.isConnected()) {
+if (Zulip.isConnected()) {
+    let zulip = new Zulip();
     document.getElementById('addZulipButton').classList.add('disabled');
     setUserIsLoggedIn();
     zulip.getAllData().then((data) => {
