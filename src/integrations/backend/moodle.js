@@ -38,9 +38,8 @@ export class Moodle extends Integration {
 
     async getAllData() {
         let siteData = await this.getSiteInfo();
-        let unread = await this.getUnreadNotifications(siteData.userid);
-        let timeline = await this.getTimelineData();
-        let news = await this.getNewForumMessages();
+        // all fails if a single Promise fails. We do accept that here because, it would fail in template generation either way.
+        let [news, unread, timeline] = await Promise.all([this.getNewForumMessages(), this.getUnreadNotifications(siteData.userid), this.getTimelineData()]);
         return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'news': news}
     }
 
