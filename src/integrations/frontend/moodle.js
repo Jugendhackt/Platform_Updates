@@ -4,7 +4,7 @@ import { setUserIsLoggedIn,showIntegration } from "./common.js";
 document.getElementById('addMoodleButton').onclick = () => Moodle.login();
 
 if (Moodle.isConnected()) {
-    let moodle = new Moodle();
+    let moodle = new Moodle(Moodle.getAllLogins()[0]);
     document.getElementById('addMoodleButton').classList.add('disabled');
     setUserIsLoggedIn();
     moodle.getAllData().then((data) => {
@@ -15,7 +15,7 @@ if (Moodle.isConnected()) {
                 'moodle_unread': data.unread
             },
             (frame) => {
-                frame.getElementsByClassName('moodle_messages_link')[0].href = moodle.getLoginData().site + '/message/index.php';
+                frame.getElementsByClassName('moodle_messages_link')[0].href = moodle.loginCredentials.site + '/message/index.php';
                 for (let event in data.timeline) {
                     if (!data.timeline.hasOwnProperty(event)) continue;
                     event = data.timeline[event];

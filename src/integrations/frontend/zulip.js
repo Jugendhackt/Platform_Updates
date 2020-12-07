@@ -4,14 +4,14 @@ import { setUserIsLoggedIn, showIntegration } from "./common.js";
 document.getElementById('addZulipButton').onclick = () => Zulip.login();
 
 if (Zulip.isConnected()) {
-    let zulip = new Zulip();
+    let zulip = new Zulip(Zulip.getAllLogins()[0]);
     document.getElementById('addZulipButton').classList.add('disabled');
     setUserIsLoggedIn();
     zulip.getAllData().then((data) => {
-        let siteURL = zulip.getLoginData().site;
+        let siteURL = zulip.loginCredentials.site;
         showIntegration('Zulip', {
             'zulip_url': siteURL.replace('http://', '').replace('https://', ''),
-            'zulip_email': zulip.getLoginData().email,
+            'zulip_email': zulip.loginCredentials.email,
             'zulip_unread_count': data.unread.length
         }, (frame) => {
             frame.getElementsByClassName('zulip_messages_link')[0].href = siteURL;

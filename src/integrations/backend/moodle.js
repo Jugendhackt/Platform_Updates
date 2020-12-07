@@ -10,29 +10,22 @@ export class Moodle extends Integration {
                 req.onloadend = () => {
                     let resp = JSON.parse(req.responseText);
                     if (resp.token) {
-                        localStorage.setItem('int_moodle_token', resp.token);
-                        localStorage.setItem('int_moodle_site', loginData.site);
+                        Moodle.addLoginCredentials({
+                            'token': resp.token,
+                            'site': loginData.site,
+                        }, loginData.username + ' @ ' + loginData.site);
                         location.href = '/';
                     } else {
-                        alert("Verbindung zu Moodle fehlgeschlagen!");
+                        alert("Verbindung zu Moodle fehlgeschlagen! Bitte überprüfe Nutzername und Passwort");
                     }
+                }
+                req.onerror = () => {
+                    alert("Verbindung zu Moodle fehlgeschlagen! Bitte überprüfe einmal die Adresse.")
                 }
                 req.open('POST', loginData.site + '/login/token.php?service=moodle_mobile_app')
                 req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 req.send('username=' + loginData.username + '&password=' + loginData.password)
             }
-        }
-    }
-
-    static logout() {
-        localStorage.removeItem('int_moodle_token');
-        localStorage.removeItem('int_moodle_site');
-    }
-
-    getLoginData() {
-        return {
-            site: localStorage.getItem('int_moodle_site'),
-            token: localStorage.getItem('int_moodle_token')
         }
     }
 
@@ -45,7 +38,6 @@ export class Moodle extends Integration {
 
     async getTimelineData() {
         return new Promise((resolve, reject) => {
-            let loginData = this.getLoginData();
             let startTime = Math.floor(Date.now() / 1000) - (60*60*24);
             let req = new XMLHttpRequest();
             req.onloadend = () => {
@@ -53,31 +45,29 @@ export class Moodle extends Integration {
                 if (resp.error) reject();
                 resolve(resp.events);
             }
-            req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=core_calendar_get_action_events_by_timesort&moodlewsrestformat=json&timesortfrom=' + startTime)
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=core_calendar_get_action_events_by_timesort&moodlewsrestformat=json&timesortfrom=' + startTime)
             req.send()
         });
     }
 
     async getSiteInfo() {
         return new Promise((resolve, reject) => {
-            let loginData = this.getLoginData();
             let req = new XMLHttpRequest();
             req.onloadend = () => {
                 resolve(JSON.parse(req.responseText));
             }
-            req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json')
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json')
             req.send()
         });
     }
 
     async getUnreadNotifications(userid) {
         return new Promise((resolve, reject) => {
-            let loginData = this.getLoginData();
             let req = new XMLHttpRequest();
             req.onloadend = () => {
                 resolve(req.responseText);
             }
-            req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=core_message_get_unread_conversations_count&moodlewsrestformat=json&useridto=' + userid)
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=core_message_get_unread_conversations_count&moodlewsrestformat=json&useridto=' + userid)
             req.send()
         });
     }
@@ -85,7 +75,6 @@ export class Moodle extends Integration {
     getNewForumMessages() {
         return new Promise(async (resolve, reject) => {
             let firstWrittenTime = Math.floor(Date.now() / 1000) - (60*60*24*3);
-            let loginData = this.getLoginData();
             let forums = await this.getForums();
             let i = 0;
             let data = [];
@@ -103,7 +92,7 @@ export class Moodle extends Integration {
                     i++;
                     if (i === forums.length) resolve(data);
                 }
-                req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=mod_forum_get_forum_discussions&moodlewsrestformat=json&forumid=' + forum.id)
+                req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=mod_forum_get_forum_discussions&moodlewsrestformat=json&forumid=' + forum.id)
                 req.send()
             });
 
@@ -112,18 +101,13 @@ export class Moodle extends Integration {
 
     getForums() {
         return new Promise((resolve, reject) => {
-            let loginData = this.getLoginData();
             let req = new XMLHttpRequest();
             req.onloadend = () => {
                 resolve(JSON.parse(req.responseText));
             }
-            req.open('GET', loginData.site + '/webservice/rest/server.php?wstoken=' + loginData.token + '&wsfunction=mod_forum_get_forums_by_courses&moodlewsrestformat=json')
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=mod_forum_get_forums_by_courses&moodlewsrestformat=json')
             req.send()
         });
-    }
-
-    static isConnected() {
-        return localStorage.getItem('int_moodle_token') && localStorage.getItem('int_moodle_site');
     }
 
 }
