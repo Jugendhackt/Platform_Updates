@@ -72,25 +72,21 @@
     <script type="module">
         import { Zulip } from "../backend/zulip.js";
 
-        if (!Zulip.isConnected()) {
-            document.getElementById('login').onclick = () => {
-                if (document.getElementById('token').value.length === 0) {
-                    Zulip.login({
-                        username: document.getElementById('username').value,
-                        password: document.getElementById('password').value,
-                        site: document.getElementById('url').value
-                    });
-                } else {
-                    Zulip.login({
-                        email: document.getElementById('email').value,
-                        token: document.getElementById('token').value,
-                        site: document.getElementById('url').value
-                    });
-                }
-            };
-        } else {
-            document.body.innerHTML = '<h3>Du hast dich bereits mit Zulip verbunden</h3><br><p>Kehre zurück zur <a href="/">App</a></p>';
-        }
+        document.getElementById('login').onclick = () => {
+            if (document.getElementById('token').value.length === 0) {
+                Zulip.login({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                    site: document.getElementById('url').value
+                });
+            } else {
+                Zulip.login({
+                    email: document.getElementById('email').value,
+                    token: document.getElementById('token').value,
+                    site: document.getElementById('url').value
+                });
+            }
+        };
     </script>
 
     <!-- Bootstrap JS -->

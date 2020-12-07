@@ -56,16 +56,11 @@
     <script type="module">
         import { Moodle } from "../backend/moodle.js";
 
-
-        if (!Moodle.isConnected()) {
-            document.getElementById('login').onclick = () => Moodle.login({
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value,
-                site: document.getElementById('url').value
-            });
-        } else {
-            document.body.innerHTML = '<h3>Du hast dich bereits mit Moodle verbunden</h3><br><p>Kehre zurück zur <a href="/">App</a></p>';
-        }
+        document.getElementById('login').onclick = () => Moodle.login({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            site: document.getElementById('url').value
+        });
     </script>
 
     <script type="module" src="../backend/integration.js"></script>
