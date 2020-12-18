@@ -35,7 +35,9 @@ if (Moodle.isConnected()) {
                             if (!forum.hasOwnProperty(forumPost)) continue;
                             forumPost = forum[forumPost];
                             let element = document.createElement('div');
-                            element.innerHTML = '<h6>' + forumPost.userfullname + ' <i>(' + forumPost.subject + ")</i> </h6>" + forumPost.message;
+                            element.classList.add('card')
+                            element.innerHTML = '<div class="card-body"><h6>' + forumPost.userfullname + ' <i>(' + forumPost.subject + ")</i> </h6>" + forumPost.message + '</div>';
+                            element.style.marginBottom = '5px';
                             frame.getElementsByClassName('moodle_news')[0].appendChild(element);
                         }
                     }
