@@ -32,8 +32,8 @@ export class Moodle extends Integration {
     async getAllData() {
         let siteData = await this.getSiteInfo();
         // all fails if a single Promise fails. We do accept that here because, it would fail in template generation either way.
-        let [news, unread, timeline] = await Promise.all([this.getNewForumMessages(), this.getUnreadNotifications(siteData.userid), this.getTimelineData()]);
-        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'news': news}
+        let [news, unread, timeline, newFiles] = await Promise.all([this.getNewForumMessages(), this.getUnreadNotifications(siteData.userid), this.getTimelineData(), this.getNewFilesForAllCourses()]);
+        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'news': news, 'newFiles': newFiles}
     }
 
     async getTimelineData() {
@@ -106,6 +106,71 @@ export class Moodle extends Integration {
                 resolve(JSON.parse(req.responseText));
             }
             req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=mod_forum_get_forums_by_courses&moodlewsrestformat=json')
+            req.send()
+        });
+    }
+
+    getCurrentCourses() {
+        return new Promise((resolve, reject) => {
+            let req = new XMLHttpRequest();
+            req.onloadend = () => {
+                resolve(JSON.parse(req.responseText)['courses'])
+            }
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token +
+                '&wsfunction=core_course_get_enrolled_courses_by_timeline_classification&moodlewsrestformat=json&classification=inprogress')
+            req.send()
+        });
+    }
+
+    getNewFilesForAllCourses(){
+        return new Promise((async (resolve, reject) => {
+            let courses = await this.getCurrentCourses();
+            let i = 0;
+            let data = [];
+            courses.forEach((course) => {
+                this.getNewFilesInCourse(course['id'], course['shortname']).then((cData) => {
+                    data.push(...cData);
+                    i++;
+                    if (i === courses.length) resolve(data);
+                })
+            });
+        }));
+    }
+
+    /**
+     * Get new files for a specific course
+     * @param id of the course to get files
+     * @param courseName name to label the course for frontend
+     */
+    getNewFilesInCourse(id, courseName) {
+        let firstFileAddedTime = Math.floor(Date.now() / 1000) - (60*60*24*5);
+        return new Promise((resolve, reject) => {
+            let req = new XMLHttpRequest();
+            req.onloadend = () => {
+                let changed = []
+                let response = JSON.parse(req.responseText);
+                for (let category in response) {
+                    if (!response.hasOwnProperty(category)) continue;
+                    category = response[category];
+                    for (let module in category['modules']) {
+                        if (!category['modules'].hasOwnProperty(module)) continue;
+                        module = category['modules'][module];
+                        if ('contentsinfo' in module) {
+                            if (module['contentsinfo']['lastmodified'] > firstFileAddedTime) {
+                                changed.push({
+                                    name: module['name'],
+                                    lastModified: module['contentsinfo']['lastmodified'],
+                                    url: module['url'],
+                                    courseName: courseName
+                                });
+                            }
+                        }
+                    }
+                }
+                resolve(changed)
+            }
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token +
+                '&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid=' + id)
             req.send()
         });
     }

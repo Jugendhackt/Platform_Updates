@@ -41,6 +41,17 @@ if (Moodle.isConnected()) {
                             frame.getElementsByClassName('moodle_news')[0].appendChild(element);
                         }
                     }
+                    for (let file in data.newFiles) {
+                        if (!data.newFiles.hasOwnProperty(file)) continue;
+                        file = data.newFiles[file];
+                        let element = document.createElement('li');
+                        let link = document.createElement('a');
+                        link.href = file['url'];
+                        link.innerText = file['name'];
+                        element.appendChild(link);
+                        element.innerHTML = element.innerHTML + ' <i>(' + file['courseName'] + ')</i>'
+                        frame.getElementsByClassName('moodle_course_files')[0].appendChild(element);
+                    }
                 });
         });
     })
