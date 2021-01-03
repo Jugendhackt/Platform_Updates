@@ -6,6 +6,21 @@
 
 .container {
     animation: blurAnimation 1.5s forwards;
+    padding-top: 5px;
+    background-color: white;
+    border-radius: 4px;
+}
+
+@media (min-width: 575px) {
+    .container {
+        margin-top: 20px;
+    }
+}
+
+body {
+    background-image: url("/img/boat_on_lake.jpg");
+    background-size: cover;
+    background-attachment: fixed;
 }
 
 @keyframes blurAnimation {
