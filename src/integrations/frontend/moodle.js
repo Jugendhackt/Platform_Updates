@@ -20,10 +20,13 @@ if (Moodle.isConnected()) {
                         if (!data.timeline.hasOwnProperty(event)) continue;
                         event = data.timeline[event];
                         let rowElement = document.createElement('tr');
+                        let courseElement = document.createElement('td');
+                        courseElement.innerText = event.course.shortname;
                         let titleElement = document.createElement('td');
                         titleElement.innerText = event.name;
                         let timeElement = document.createElement('td');
                         timeElement.innerText = new Date(event.timestart * 1000).toLocaleString();
+                        rowElement.appendChild(courseElement);
                         rowElement.appendChild(titleElement);
                         rowElement.appendChild(timeElement);
                         frame.getElementsByClassName('moodle_abgaben')[0].appendChild(rowElement);
