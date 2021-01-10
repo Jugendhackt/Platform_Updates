@@ -32,8 +32,8 @@ export class Moodle extends Integration {
     async getAllData() {
         let siteData = await this.getSiteInfo();
         // all fails if a single Promise fails. We do accept that here because, it would fail in template generation either way.
-        let [news, unread, timeline, newFiles] = await Promise.all([this.getNewForumMessages(), this.getUnreadNotifications(siteData.userid), this.getTimelineData(), this.getNewFilesForAllCourses()]);
-        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'news': news, 'newFiles': newFiles}
+        let [news, unread, timeline, newFiles, noDueAssigns] = await Promise.all([this.getNewForumMessages(), this.getUnreadNotifications(siteData.userid), this.getTimelineData(), this.getNewFilesForAllCourses(), this.getLastWeeksNoDueDateAssignments()]);
+        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'news': news, 'newFiles': newFiles, 'noDueDateAssignments': noDueAssigns}
     }
 
     async getTimelineData() {
@@ -171,6 +171,31 @@ export class Moodle extends Integration {
             }
             req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token +
                 '&wsfunction=core_course_get_contents&moodlewsrestformat=json&courseid=' + id)
+            req.send()
+        });
+    }
+
+    getLastWeeksNoDueDateAssignments() {
+        let firstCreatedTime = Math.floor(Date.now() / 1000) - (60*60*24*14);
+        return new Promise((resolve, reject) => {
+            let req = new XMLHttpRequest();
+            req.onloadend = () => {
+                let assignments = []
+                let response = JSON.parse(req.responseText)['courses'];
+                for (let course in response) {
+                    if (!response.hasOwnProperty(course)) continue;
+                    for (let assignment in response[course]['assignments']) {
+                        if (!response[course]['assignments'].hasOwnProperty(assignment)) continue;
+                        assignment = response[course]['assignments'][assignment];
+                        if (assignment['duedate'] === 0 && assignment['timemodified'] > firstCreatedTime)
+                            assignments.push(assignment);
+                    }
+
+                }
+                resolve(assignments)
+            }
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token +
+                '&wsfunction=mod_assign_get_assignments&moodlewsrestformat=json')
             req.send()
         });
     }

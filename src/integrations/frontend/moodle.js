@@ -31,6 +31,23 @@ if (Moodle.isConnected()) {
                         rowElement.appendChild(timeElement);
                         frame.getElementsByClassName('moodle_abgaben')[0].appendChild(rowElement);
                     }
+                    for (let assignment in data.noDueDateAssignments) {
+                        if (!data.noDueDateAssignments.hasOwnProperty(assignment)) continue;
+                        assignment = data.noDueDateAssignments[assignment];
+                        let rowElement = document.createElement('tr');
+                        let titleElement = document.createElement('td');
+                        titleElement.innerText = assignment.name;
+                        let timeElement = document.createElement('td');
+                        let timeLinkElement = document.createElement('a');
+                        timeLinkElement.href = moodle.loginCredentials.site + '/mod/assign/view.php?id=' + assignment.cmid;
+                        timeLinkElement.target = '_blank';
+                        timeLinkElement.innerText = "K/A";
+                        timeElement.appendChild(timeLinkElement);
+                        rowElement.appendChild(document.createElement('td'));
+                        rowElement.appendChild(titleElement);
+                        rowElement.appendChild(timeElement);
+                        frame.getElementsByClassName('moodle_abgaben')[0].appendChild(rowElement);
+                    }
                     for (let forum in data.news) {
                         if (!data.news.hasOwnProperty(forum)) continue;
                         forum = data.news[forum];
