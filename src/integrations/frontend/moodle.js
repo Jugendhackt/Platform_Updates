@@ -16,34 +16,32 @@ if (Moodle.isConnected()) {
                 },
                 (frame) => {
                     frame.getElementsByClassName('moodle_messages_link')[0].href = moodle.loginCredentials.site + '/message/index.php';
+                    let events = data.timeline;
+                    events.push(...data.calendar);
+                    events.sort((a, b) => a.timestart - b.timestart);
+                    events.push(...data.noDueDateAssignments);
                     for (let event in data.timeline) {
                         if (!data.timeline.hasOwnProperty(event)) continue;
                         event = data.timeline[event];
                         let rowElement = document.createElement('tr');
                         let courseElement = document.createElement('td');
-                        courseElement.innerText = event.course.shortname;
+                        if (event.course && event.course.shortname)
+                            courseElement.innerText = event.course.shortname;
+                        else if (event.courseid === 0 && event.userid)
+                            courseElement.innerText = 'Nutzer';
                         let titleElement = document.createElement('td');
                         titleElement.innerText = event.name;
                         let timeElement = document.createElement('td');
-                        timeElement.innerText = new Date(event.timestart * 1000).toLocaleString();
+                        if (event.timestart)
+                            timeElement.innerText = new Date(event.timestart * 1000).toLocaleString();
+                        else {
+                            let timeLinkElement = document.createElement('a');
+                            timeLinkElement.href = moodle.loginCredentials.site + '/mod/assign/view.php?id=' + event.cmid;
+                            timeLinkElement.target = '_blank';
+                            timeLinkElement.innerText = "K/A";
+                            timeElement.appendChild(timeLinkElement);
+                        }
                         rowElement.appendChild(courseElement);
-                        rowElement.appendChild(titleElement);
-                        rowElement.appendChild(timeElement);
-                        frame.getElementsByClassName('moodle_abgaben')[0].appendChild(rowElement);
-                    }
-                    for (let assignment in data.noDueDateAssignments) {
-                        if (!data.noDueDateAssignments.hasOwnProperty(assignment)) continue;
-                        assignment = data.noDueDateAssignments[assignment];
-                        let rowElement = document.createElement('tr');
-                        let titleElement = document.createElement('td');
-                        titleElement.innerText = assignment.name;
-                        let timeElement = document.createElement('td');
-                        let timeLinkElement = document.createElement('a');
-                        timeLinkElement.href = moodle.loginCredentials.site + '/mod/assign/view.php?id=' + assignment.cmid;
-                        timeLinkElement.target = '_blank';
-                        timeLinkElement.innerText = "K/A";
-                        timeElement.appendChild(timeLinkElement);
-                        rowElement.appendChild(document.createElement('td'));
                         rowElement.appendChild(titleElement);
                         rowElement.appendChild(timeElement);
                         frame.getElementsByClassName('moodle_abgaben')[0].appendChild(rowElement);

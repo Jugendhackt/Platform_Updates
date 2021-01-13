@@ -32,8 +32,8 @@ export class Moodle extends Integration {
     async getAllData() {
         let siteData = await this.getSiteInfo();
         // all fails if a single Promise fails. We do accept that here because, it would fail in template generation either way.
-        let [news, unread, timeline, newFiles, noDueAssigns] = await Promise.all([this.getNewForumMessages(), this.getUnreadNotifications(siteData.userid), this.getTimelineData(), this.getNewFilesForAllCourses(), this.getLastWeeksNoDueDateAssignments()]);
-        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'news': news, 'newFiles': newFiles, 'noDueDateAssignments': noDueAssigns}
+        let [news, unread, timeline, calendar, newFiles, noDueAssigns] = await Promise.all([this.getNewForumMessages(), this.getUnreadNotifications(siteData.userid), this.getTimelineData(), this.getCalenderEntryData(), this.getNewFilesForAllCourses(), this.getLastWeeksNoDueDateAssignments()]);
+        return {name: siteData.sitename, firstName: siteData.firstname, 'unread': unread, 'timeline': timeline, 'calendar': calendar, 'news': news, 'newFiles': newFiles, 'noDueDateAssignments': noDueAssigns}
     }
 
     async getTimelineData() {
@@ -46,6 +46,19 @@ export class Moodle extends Integration {
                 resolve(resp.events);
             }
             req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=core_calendar_get_action_events_by_timesort&moodlewsrestformat=json&timesortfrom=' + startTime)
+            req.send()
+        });
+    }
+
+    getCalenderEntryData() {
+        return new Promise((resolve, reject) => {
+            let startTime = Math.floor(Date.now() / 1000) - (60*60*24);
+            let req = new XMLHttpRequest();
+            req.onloadend = () => {
+                let resp = JSON.parse(req.responseText);
+                resolve(resp.events);
+            }
+            req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=core_calendar_get_calendar_events&moodlewsrestformat=json&options[timestart]=' + startTime)
             req.send()
         });
     }
