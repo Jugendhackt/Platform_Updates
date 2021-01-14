@@ -67,7 +67,11 @@ export class Moodle extends Integration {
         return new Promise((resolve, reject) => {
             let req = new XMLHttpRequest();
             req.onloadend = () => {
-                resolve(JSON.parse(req.responseText));
+                let resp = JSON.parse(req.responseText);
+                if (!resp || resp.errorcode) {
+                    reject(resp.errorcode);
+                }
+                resolve(resp);
             }
             req.open('GET', this.loginCredentials.site + '/webservice/rest/server.php?wstoken=' + this.loginCredentials.token + '&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json')
             req.send()

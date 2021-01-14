@@ -71,6 +71,9 @@ if (Moodle.isConnected()) {
                         frame.getElementsByClassName('moodle_course_files')[0].appendChild(element);
                     }
                 });
-        });
+        }).catch((reason => {
+            if (reason === 'invalidtoken') alert("Dein Moodle Token ist ausgelaufen. Bitte logge dich erneut ein.")
+            else alert(reason);
+        }))
     })
 }
