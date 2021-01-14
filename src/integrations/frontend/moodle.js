@@ -46,6 +46,7 @@ if (Moodle.isConnected()) {
                         rowElement.appendChild(timeElement);
                         frame.getElementsByClassName('moodle_abgaben')[0].appendChild(rowElement);
                     }
+                    data.news.sort((a,b) => a.timemodified - b.timemodified);
                     for (let forum in data.news) {
                         if (!data.news.hasOwnProperty(forum)) continue;
                         forum = data.news[forum];
@@ -54,7 +55,16 @@ if (Moodle.isConnected()) {
                             forumPost = forum[forumPost];
                             let element = document.createElement('div');
                             element.classList.add('card')
-                            element.innerHTML = '<div class="card-body"><h6>' + forumPost.userfullname + ' <i>(' + forumPost.subject + ")</i> </h6>" + forumPost.message + '</div>';
+                            let body = document.createElement('div');
+                            body.innerHTML = forumPost.message;
+                            let showMore = document.createElement('i');
+                            showMore.innerText = "Klicken um mehr anzuzeigen.";
+                            console.log(forumPost);
+                            body.hidden = true;
+                            element.innerHTML = '<h6>' + (new Date(forumPost.timemodified * 1000)).toLocaleString() + ': <b>' + forumPost.subject + '</b> <i>(' + forumPost.userfullname + ')</i> </h6></div>';
+                            element.appendChild(body);
+                            element.appendChild(showMore);
+                            element.onclick = () => { body.hidden = !body.hidden; showMore.hidden = !body.hidden};
                             element.style.marginBottom = '5px';
                             frame.getElementsByClassName('moodle_news')[0].appendChild(element);
                         }
