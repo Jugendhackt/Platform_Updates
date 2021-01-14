@@ -59,7 +59,6 @@ if (Moodle.isConnected()) {
                             body.innerHTML = forumPost.message;
                             let showMore = document.createElement('i');
                             showMore.innerText = "Klicken um mehr anzuzeigen.";
-                            console.log(forumPost);
                             body.hidden = true;
                             element.innerHTML = '<h6>' + (new Date(forumPost.timemodified * 1000)).toLocaleString() + ': <b>' + forumPost.subject + '</b> <i>(' + forumPost.userfullname + ')</i> </h6></div>';
                             element.appendChild(body);
