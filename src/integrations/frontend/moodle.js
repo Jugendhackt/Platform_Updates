@@ -59,6 +59,7 @@ if (Moodle.isConnected()) {
                             frame.getElementsByClassName('moodle_news')[0].appendChild(element);
                         }
                     }
+                    data.newFiles.sort((a, b) => a.lastModified - b.lastModified);
                     for (let file in data.newFiles) {
                         if (!data.newFiles.hasOwnProperty(file)) continue;
                         file = data.newFiles[file];
